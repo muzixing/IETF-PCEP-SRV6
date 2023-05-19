@@ -1,6 +1,6 @@
 ---
 v: 3
-docname: draft-ietf-pce-segment-routing-ipv6-16
+docname: draft-ietf-pce-segment-routing-ipv6-17
 cat: std
 stream: IETF
 consensus: true
@@ -201,7 +201,7 @@ segments) in the context of supporting SRv6 in PCEP.
 Basic operations for PCEP speakers are as per {{RFC8664}}. SRv6 Paths computed by a PCE can be represented as an ordered list of SRv6 segments of 128-bit value.
 
 {{RFC8664}} defined a new Explicit Route Object (ERO) subobject denoted by "SR-ERO subobject" capable of carrying a SID as well as the identity of the node/adjacency represented by the SID for SR-MPLS. SR-capable PCEP speakers can generate and/or process such an ERO subobject. An ERO containing SR-ERO subobjects can be included in the PCEP Path Computation Reply (PCRep) message defined in {{RFC5440}}, the PCEP LSP Initiate Request message (PCInitiate) defined in {{RFC8281}}, as well as in the PCEP LSP Update Request (PCUpd) and PCEP LSP State Report (PCRpt) messages defined in
-defined in {{RFC8231}}. {{RFC8664}} also defines a new Record Route Object(RR0) called SR-RRO to represents the SID list that was applied by the PCC, that is, the actual path taken by the LSP in SR-MPLS network.
+defined in {{RFC8231}}. {{RFC8664}} also defines a new Reported Route Object(RR0) called SR-RRO to represents the SID list that was applied by the PCC, that is, the actual path taken by the LSP in SR-MPLS network.
 
 This document define new subobjects "SRv6-ERO" and "SRv6-RRO" in the ERO and the RRO respectively to carry the SRv6 SID (IPv6 Address). SRv6-capable
 PCEP speakers MUST be able to generate and/or process these subobjects.
@@ -339,6 +339,7 @@ An SRv6-ERO subobject is formatted as shown in the following figure.
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    //                    NAI (variable, optional)                 //
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                                                               |
    |                     SID Structure (optional)                  |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~~
@@ -543,12 +544,13 @@ subobjects" whose format is shown below.
    |              Reserved         |      Endpoint Behavior        |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    |                                                               |
-   |                      SRv6 SID                                 |
-   |                     (128-bit)                                 |
+   |                      SRv6 SID(optional)                       |
+   |                           (128-bit)                           |
    |                                                               |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    //                    NAI (variable)                           //
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                                                               |
    |                     SID Structure (optional)                  |
    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
@@ -591,7 +593,7 @@ ignore any MSD-Type, MSD-Value fields and assume that the sender
 can impose any length of SRH. If a PCC sets the X flag to zero, then
 it sets the SRv6 MSD-Type, MSD-Value fields that it can impose on a
 packet. If a PCE receives an SRv6-PCE-CAPABILITY sub-TLV with the X
-flag as set, and SRv6 MSD-Type or MSD-Value fields are set to zero then it
+flag as set, and SRv6 MSD-Type or MSD-Value fields are set then it
 is considered as an error and the PCE MUST respond with a PCErr message
 (Error-Type = 1 "PCEP session establishment failure" and Error-Value = 1
 "reception of an invalid Open message or a non Open message."). In
@@ -606,19 +608,12 @@ SRv6-PCE-CAPABILITY sub-TLV indicates the SRv6 SID imposition limit
 for the PCC node. However, if a PCE learns these via alternate mechanisms, e.g routing protocols, as specified in: {{I-D.ietf-lsr-ospfv3-srv6-extensions}};
 {{I-D.ietf-lsr-isis-srv6-extensions}}; {{I-D.ietf-idr-bgpls-srv6-ext}}, then it ignores the values in the SRv6-PCE-CAPABILITY sub-TLV. Furthermore, whenever a PCE learns the other SRv6 MSD types that may be defined in the future via alternate mechanisms, it MUST use those values regardless of the values exchanged in the SRv6-PCE-CAPABILITY sub-TLV.
 
-OA PCE MUST NOT send SRv6 paths with a number of SIDs exceeding that 
+PCE MUST NOT send SRv6 paths with a number of SIDs exceeding that 
 SRv6 MSD value (based on the SRv6 MSD Type). If a PCC needs to modify 
 the SRv6 MSD value signaled via the Open message, it MUST close the PCEP session and re-establish it with the new value. If a PCEP session is established with a non-zero SRv6 MSD value, and the PCC receives an SRv6 path containing more SIDs than specified in the SRv6 MSD value (based on the SRv6 MSD type), the PCC MUST send a PCErr message with Error-Type = 10 (Reception of an invalid object) and Error-Value = TBD1 (Unsupported number of SRv6-ERO subobjects). If a PCEP session is established with an SRv6 MSD value of zero, then the PCC MAY specify an SRv6 MSD for each path computation request that it sends to the PCE, by including a "maximum SID depth" metric object on the request similar to {{RFC8664}}.
 
-The N flag, X flag and (MSD-Type,MSD-Value) pair inside the
-SRv6-PCE-CAPABILITY sub-TLV are meaningful only in the Open message
-sent from a PCC to a PCE. As such, a PCE MUST set the flags to zero
-and not include any (MSD-Type,MSD-Value) pair in the
-SRv6-PCE-CAPABILITY sub-TLV in an outbound message to a PCC.
-Si
-SRv6-PCE-CAPABILITY sub-TLVs in an Open message, it processes only themilarly, a PCC MUST ignore N,X flag and any (MSD-Type,MSD-Value)
-pair received from a PCE. If a PCE receives multiple
-first sub-TLV received.
+
+The N flag, X flag and (MSD-Type,MSD-Value) pair inside the SRv6-PCE-CAPABILITY sub-TLV are meaningful only in the Open message sent to a PCE. As such,the flags MUST be set to zero and a (MSD-Type,MSD-Value) pair MUST NOT be present in the SRv6-PCE-CAPABILITY sub-TLV in an Open message sent to a PCC.  Similarly, a PCC MUST ignore N,X flag and any (MSD-Type,MSD-Value) pair in a received Open message. If a PCE receives multiple SRv6-PCE-CAPABILITY sub-TLVs in an Open message, it processes only the first sub-TLV received.
 
 
 ## ERO Processing {#ERO-Processing}
@@ -837,10 +832,10 @@ information as they see fit".
 ## PCEP ERO and RRO subobjects {#PCEP-ERO-and-RRO-subobjects}
 
 This document defines a new subobject type for the PCEP explicit
-route object (ERO), and a new subobject type for the PCEP record route
+route object (ERO), and a new subobject type for the PCEP reported route
 object (RRO). The code points for subobject types of these objects is
 maintained in the RSVP parameters registry, under the EXPLICIT_ROUTE
-and ROUTE_RECORD objects. IANA is requested to confirm the following allocations in the RSVP Parameters registry for each of the new subobject types
+and REPORTED_ROUTE objects. IANA is requested to confirm the following allocations in the RSVP Parameters registry for each of the new subobject types
 defined in this document.
 
 
@@ -848,7 +843,7 @@ defined in this document.
   Object                Subobject                  Subobject Type
   --------------------- -------------------------- ------------------
   EXPLICIT_ROUTE        SRv6-ERO (PCEP-specific)     40
-  ROUTE_RECORD          SRv6-RRO (PCEP-specific)     40
+  REPORTED_ROUTE        SRv6-RRO (PCEP-specific)     40
 
 ~~~~
 
