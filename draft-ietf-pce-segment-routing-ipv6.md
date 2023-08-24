@@ -63,11 +63,7 @@ author:
 
 contributor:
 - name: Dhruv Dhody
-  org: Huawei Technologies
-  street: Divyashree Techno Park, Whitefield
-  city: Bangalore
-  region: Karnataka
-  code: 560066
+  org: Huawei
   country: India
   email: dhruv.ietf@gmail.com
 - name: Huang Wumin
@@ -88,7 +84,7 @@ contributor:
   org: ZTE Corporation
   country: China
   email: chen.ran@zte.com.cn
-  
+
 
 normative:
   RFC3209:
@@ -111,7 +107,6 @@ informative:
   RFC8754:
   RFC9256:
   RFC9352:
-  I-D.ietf-spring-srv6-srh-compression:
 
 
 --- abstract
@@ -122,18 +117,18 @@ any head-end node to select any path without relying on a hop-by-hop signaling t
 
 A Segment Routed Path can be derived from a variety of mechanisms, including an IGP Shortest Path Tree (SPT), explicit configuration, or a PCE.
 
-Since SR can be applied to both MPLS and IPv6 forwarding planes, a PCE should be able to compute SR-Path for both MPLS and IPv6 forwarding planes. The PCEP extension and mechanisms to support SR-MPLS have been defined. This document describes the extensions required for SR support for IPv6 data plane in the Path Computation Element communication Protocol(PCEP). 
+Since SR can be applied to both MPLS and IPv6 forwarding planes, a PCE should be able to compute SR-Path for both MPLS and IPv6 forwarding planes. The PCEP extension and mechanisms to support SR-MPLS have been defined. This document describes the extensions required for SR support for IPv6 data plane in the Path Computation Element communication Protocol (PCEP).
 
 --- middle
 
 # Introduction
 
-As defined in {{RFC8402}}, Segment Routing (SR) architecture allows the source node to steer a packet through a path indicated by an ordered list of instructions, called segments. A segment can represent any instruction, topological or service-based, and it can have a semantic local to an SR node or global within an SR domain. 
+As defined in {{RFC8402}}, Segment Routing (SR) architecture allows the source node to steer a packet through a path indicated by an ordered list of instructions, called segments. A segment can represent any instruction, topological or service-based, and it can have a semantic local to an SR node or global within an SR domain.
 
-When the SR architecture is applied to the MPLS forwarding plane, it is called SR-MPLS. When the SR architecture is applied to the IPv6 data plane, is is called SRv6 (Segment Routing over IPv6 data plane) {{RFC8754}}. 
+When the SR architecture is applied to the MPLS forwarding plane, it is called SR-MPLS. When the SR architecture is applied to the IPv6 data plane, is is called SRv6 (Segment Routing over IPv6 data plane) {{RFC8754}}.
 
 
-An SR path can be derived from an IGP Shortest Path Tree(SPT), but SR-TE(Segment Routing Traffic Engineering) paths may not follow IGP SPT. Such paths may be chosen by a suitable network planning tool, or a PCE and provisioned on the ingress node.
+An SR path can be derived from an IGP Shortest Path Tree (SPT), but SR-TE (Segment Routing Traffic Engineering) paths may not follow IGP SPT. Such paths may be chosen by a suitable network planning tool, or a PCE and provisioned on the ingress node.
 
 
 {{RFC5440}} describes Path Computation Element communication Protocol (PCEP) for communication between a Path Computation Client (PCC) and a Path Computation Element (PCE) or between a pair of PCEs. A PCE or a PCC operating as a PCE (in hierarchical PCE environment) computes paths for MPLS Traffic Engineering LSPs (MPLS-TE LSPs) based on various constraints and optimization criteria.
@@ -238,7 +233,7 @@ mandatory and/or optional objects. This document does not require any
 changes in the format of PCReq and PCRep messages specified in {{RFC5440}},
 PCInitiate message specified in {{RFC8281}}, and PCRpt and PCUpd messages
 specified in {{RFC8231}}. However, PCEP messages pertaining to SRv6 MUST
-include PATH-SETUP-TYPE TLV in the RP or SRP object to clearly
+include PATH-SETUP-TYPE TLV in the RP (Request Parameters) or SRP (Stateful PCE Request Parameters) object to clearly
 identify that SRv6 is intended.
 
 <!-- In other words, a PCEP speaker MUST NOT infer whether or
@@ -262,7 +257,7 @@ A PCEP speaker indicates its support of the function described in this document 
 
 This document also defines the SRv6-PCE-CAPABILITY sub-TLV. PCEP speakers use this sub-TLV to exchange information about their SRv6 capability. If a PCEP speaker includes PST=3 in the PST List of the PATH-SETUP-TYPE-CAPABILITY TLV then it MUST also include the SRv6-PCE-CAPABILITY sub-TLV inside the PATH-SETUP-TYPE-CAPABILITY TLV. For further error handling, please see {{Procedures}}.
 
-The format of the SRv6-PCE-CAPABILITY sub-TLV is shown in the following figure. 
+The format of the SRv6-PCE-CAPABILITY sub-TLV is shown in the following figure.
 
 ~~~~
  0                   1                   2                   3
@@ -281,7 +276,7 @@ The format of the SRv6-PCE-CAPABILITY sub-TLV is shown in the following figure.
 ~~~~
 {: #SRv6-PCE-CAPABILITY-sub-TLV-format title='SRv6-PCE-CAPABILITY sub-TLV format'}
 
-The code point for the TLV type is 27 and the format is compliant with the PCEP TLV format defined in {{RFC5440}}. That is, the sub-TLV is composed of 2 octets for the type, 2 octets specifying the length, and a Value field. The Type field when set to 27 identifies the SRv6-PCE-CAPABILITY sub-TLV and the presence of the sub-TLV indicates the support for the SRv6 paths in PCEP. The Length field defines the length of the value portion in octets. The TLV is padded to 4-octet alignment, and padding is not included in the Length field. The number of (MSD-Type,MSD-Value) pairs can be determined from the Length field of the TLV.
+The code point for the TLV type is 27 and the format is compliant with the PCEP TLV format defined in {{RFC5440}}. That is, the sub-TLV is composed of 2 octets for the type, 2 octets specifying the length, and a Value field. The Type field when set to 27 identifies the SRv6-PCE-CAPABILITY sub-TLV and the presence of the sub-TLV indicates the support for the SRv6 paths in PCEP. The Length field defines the length of the value portion in octets. The TLV is padded to 4-octet alignment, and padding is not included in the Length field. The (MSD-Type,MSD-Value) pairs are OPTIONAL. The number of (MSD-Type,MSD-Value) pairs can be determined from the Length field of the TLV.
 
 The value comprises of -
 
@@ -305,6 +300,9 @@ The value comprises of -
 > with SRv6 MSD types as per {{RFC9352}};
 > MSD-Value (1 octet) is as per {{RFC8491}}.
 
+The SRv6 MSD information advertised via SRv6-PCE-Capability sub-TLV conveys the SRv6 capabilities of the PCEP speaker alone. However, when it comes to the computation of an SR Policy for the SRv6 dataplane, the SRv6 MSD capabilities of all the intermediate SRv6 Endpoint node as well as the tailend node also need to be considered to ensure those midpoints are able to correctly process their segments and for the tailend to dispose of the SRv6 encapsulation. The SRv6 MSD capabilities of these other nodes MAY be learned as part of the topology information via IGP/BGP-LS or via PCEP if the PCE also happens to have PCEP sessions to those nodes.
+
+It is RECOMMENDED that the SRv6 MSD information be not included in the SRv6-PCE-Capability sub-TLV in deployments where the PCE is able to obtain this via IGP/BGP-LS as part of the topology information.
 
 ## The RP/SRP Object {#The-SRP-Object}
 
@@ -423,9 +421,6 @@ associated with the SRv6 SIDs. This information is optional, but it is recommend
 
 SRv6 SID: SRv6 Identifier is an 128-bit IPv6 address representing the SRv6 segment.
 
-In some use cases, SID compression is used to reduce the size of the Segment-List. {{I-D.ietf-spring-srv6-srh-compression}} specifies the compressed SRv6 Segment-List encoding in the SRH.  As per {{I-D.ietf-spring-srv6-srh-compression}}, the SR source node (PCC) implements the compression logic according to the information of the SID, therefore, the uncompressed segment list is encoded in PCEP and no new requirement of the PECP extension is introduced.
-
-
 NAI: The NAI associated with the SRv6-SID. The NAI's format
 depends on the value in the NT field, and is described in {{RFC8664}}.
 
@@ -434,7 +429,7 @@ At least one SRv6-SID or the NAI MUST be included in the SRv6-ERO subobject, and
 #### SID Structure {#SID-Structure}
 
 The SID Structure is an optional part of the SR-ERO subobject,
-as described in {{SRv6-ERO-Subobject}}. However, as per {{I-D.ietf-spring-srv6-srh-compression}}, the SID Structure information is required in compression so that the ingress PCC can process the uncompressed Segment-List to a compressed Segment-List. This is out of the scope of this document and specified in {{I-D.ietf-spring-srv6-srh-compression}}.
+as described in {{SRv6-ERO-Subobject}}.
 
 {{RFC8986}} defines an SRv6 SID as consisting of LOC:FUNCT:ARG,
 where a locator (LOC) is encoded in the L most significant bits of
@@ -569,8 +564,7 @@ sub-TLV in the Open message that it sends to a PCC.
 If a PCEP speaker receives a PATH-SETUP-TYPE-CAPABILITY TLV with a
 PST list containing PST=3, but the SRv6-PCE-CAPABILITY sub-TLV is absent, then the PCEP speaker MUST send a PCErr message with Error-Type = 10 (Reception of an invalid object) and Error-Value = 34 (Missing PCE-SRv6-CAPABILITY sub-TLV) and MUST then close the PCEP session. If a PCEP speaker receives a PATH-SETUP-TYPE-CAPABILITY TLV with an SRv6-PCE-CAPABILITY sub-TLV, but the PST list does not contain PST=3, then the PCEP speaker MUST ignore the SRv6-PCE-CAPABILITY sub-TLV.
 
-The number of SRv6 SIDs that can be imposed by a PCC on a packet depends on
-the PCC's IPv6 data plane capability. If a PCC sets the X flag to 1
+If a PCC sets the X flag to 1
 then the MSD is not used and MUST NOT be included. If a PCE receives
 an SRv6-PCE-CAPABILITY sub-TLV with the X flag set to 1 then it MUST
 ignore any MSD-Type, MSD-Value fields and assume that the sender
@@ -589,22 +583,21 @@ non Open message.").
 
 Note that the MSD-Type, MSD-Value exchanged via the
 SRv6-PCE-CAPABILITY sub-TLV indicates the SRv6 SID imposition limit
-for the PCC node. However, if a PCE learns these via alternate mechanisms, e.g routing protocols {{RFC9352}}, then it ignores the values in the SRv6-PCE-CAPABILITY sub-TLV. Furthermore, whenever a PCE learns any other SRv6 MSD types that may be defined in the future via alternate mechanisms, it MUST use those values regardless of the values exchanged in the SRv6-PCE-CAPABILITY sub-TLV. 
+for the sender PCC node only. However, if a PCE learns these via alternate mechanisms, e.g routing protocols {{RFC9352}}, then it ignores the values in the SRv6-PCE-CAPABILITY sub-TLV. Furthermore, whenever a PCE learns any other SRv6 MSD types that may be defined in the future via alternate mechanisms, it MUST use those values regardless of the values exchanged in the SRv6-PCE-CAPABILITY sub-TLV.
 
-In a path computation, a PCE must consider all the MSD information of the nodes along the path instead of only the MSD information of the ingress PCC since a packet may be dropped on any node in a forwarding path because of MSD exceeding. Therefore, using the MSD information of all the nodes learned from IGP or BGP-LS is recommended than the MSD information conveyed by PCEP.
+During path computation, PCE must consider the MSD information of all the nodes along the path instead of only the MSD information of the ingress PCC since a packet may be dropped on any node in a forwarding path because of MSD exceeding. The MSD capabilities of all SR nodes along the path can be learned as part of the topology information via IGP/BGP-LS or via PCEP if the PCE also happens to have PCEP sessions to those nodes.
 
-A PCE MUST NOT send SRv6 paths with a number of SIDs that  wouldn't fit in the number of SRH segments identified by that SRv6 MSD value based on the SRv6 MSD Type. If a PCC needs to modify 
-the SRv6 MSD value signaled via the Open message, it MUST close the PCEP session and re-establish it with the new value. If a PCEP session is established with a non-zero SRv6 MSD value, and the PCC receives an SRv6 path containing more SIDs than would fit in the number of SRH segments specified in the SRv6 MSD value based on the SRv6 MSD type, the PCC MUST send a PCErr message with Error-Type = 10 (Reception of an invalid object) and Error-Value = 39 (Unsupported number of SRv6-ERO subobjects). If a PCEP session is established with an SRv6 MSD value of zero, then the PCC MAY specify an SRv6 MSD for each path computation request that it sends to the PCE, by including a "maximum SID depth" metric object on the request similar to {{RFC8664}}.
+A PCE MUST NOT send SRv6 paths exceeding the SRv6 MSD capabilities of the PCC. If a PCC needs to modify the SRv6 MSD value signaled via the Open message, it MUST close the PCEP session and re-establish it with the new value. If the PCC receives an SRv6 path that exceed its SRv6 MSD capabilties, the PCC MUST send a PCErr message with Error-Type = 10 (Reception of an invalid object) and Error-Value = 39 (Unsupported number of SRv6-ERO subobjects).
 
 
-The N flag, X flag and (MSD-Type,MSD-Value) pair inside the SRv6-PCE-CAPABILITY sub-TLV are meaningful only in the Open message sent to a PCE. As such,the flags MUST be set to zero and a (MSD-Type,MSD-Value) pair MUST NOT be present in the SRv6-PCE-CAPABILITY sub-TLV in an Open message sent to a PCC.  Similarly, a PCC MUST ignore N,X flag and any (MSD-Type,MSD-Value) pair in a received Open message. If a PCE receives multiple SRv6-PCE-CAPABILITY sub-TLVs in an Open message, it processes only the first sub-TLV received.
+The N flag, X flag and (MSD-Type,MSD-Value) pair inside the SRv6-PCE-CAPABILITY sub-TLV are meaningful only in the Open message sent to a PCE. As such,the flags MUST be set to zero and a (MSD-Type,MSD-Value) pair MUST NOT be present in the SRv6-PCE-CAPABILITY sub-TLV in an Open message sent to a PCC.  Similarly, a PCC MUST ignore flags and any (MSD-Type,MSD-Value) pair in a received Open message. If a PCE receives multiple SRv6-PCE-CAPABILITY sub-TLVs in an Open message, it processes only the first sub-TLV received.
 
 
 ## ERO Processing {#ERO-Processing}
 
 The processing of ERO remains unchanged in accordance with both {{RFC5440}} and {{RFC8664}}.
 
-### SRv6 ERO Validation 
+### SRv6 ERO Validation
 
 If a PCC does not support the SRv6 PCE Capability and thus cannot
 recognize the SRv6-ERO or SRv6-RRO subobjects. It should respond according to the rules for a malformed object as described in {{RFC5440}}.
@@ -661,11 +654,7 @@ subobject types").
 
 In case a PCEP speaker receives an SRv6-ERO subobject, when the PST is not set to 3 or SRv6-PCE-CAPABILITY sub-TLV was not exchanged, it MUST send a PCErr message with Error-Type = 19 ("Invalid Operation") and Error-Value = 19 ("Attempted SRv6 when the capability was not advertised").
 
-If a PCC receives a list of SRv6 segments, and the number of SRv6
-segments exceeds the SRv6 MSD that the PCC can impose on the packet
-(SRH), it MUST send a PCErr message with Error-Type = 10 ("Reception
-of an invalid object") and Error-Value = 43 ("Unsupported number of SRv6-ERO
-subobjects") as per {{RFC8664}}.
+If a PCC receives an SRv6 path that exceeds the SRv6 MSD capabilities, it MUST send a PCErr message with Error-Type = 10 ("Reception of an invalid object") and Error-Value = 43 ("Unsupported number of SRv6-ERO subobjects") as per {{RFC8664}}.
 
 
 ### Interpreting the SRv6-ERO
