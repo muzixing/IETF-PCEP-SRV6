@@ -1,6 +1,6 @@
 ---
 v: 3
-docname: draft-ietf-pce-segment-routing-ipv6-18
+docname: draft-ietf-pce-segment-routing-ipv6-19
 cat: std
 stream: IETF
 consensus: true
@@ -283,15 +283,12 @@ The value comprises of -
 > Reserved: 2 octet, this field MUST be set to 0 on
 > transmission, and ignored on receipt.
 
-> Flags: 2 octet, two bits are currently assigned in this
+> Flags: 2 octet, one bit is currently assigned in this
 > document. {{SRv6-PCE-Capability-Flags}}
 
 > * N bit: A PCC sets this flag bit to 1 to indicate that it
 >   is capable of resolving a Node or Adjacency Identifier (NAI)
 >   to an SRv6-SID.
-> * X bit: A PCC sets this bit to 1 to indicate that it does
->   not impose any limit on MSD (irrespective of the
->   MSD-Type).
 > * Unassigned bits MUST be set to 0 and ignored on
 >   receipt.
 
@@ -564,18 +561,7 @@ sub-TLV in the Open message that it sends to a PCC.
 If a PCEP speaker receives a PATH-SETUP-TYPE-CAPABILITY TLV with a
 PST list containing PST=3, but the SRv6-PCE-CAPABILITY sub-TLV is absent, then the PCEP speaker MUST send a PCErr message with Error-Type = 10 (Reception of an invalid object) and Error-Value = 34 (Missing PCE-SRv6-CAPABILITY sub-TLV) and MUST then close the PCEP session. If a PCEP speaker receives a PATH-SETUP-TYPE-CAPABILITY TLV with an SRv6-PCE-CAPABILITY sub-TLV, but the PST list does not contain PST=3, then the PCEP speaker MUST ignore the SRv6-PCE-CAPABILITY sub-TLV.
 
-If a PCC sets the X flag to 1
-then the MSD is not used and MUST NOT be included. If a PCE receives
-an SRv6-PCE-CAPABILITY sub-TLV with the X flag set to 1 then it MUST
-ignore any MSD-Type, MSD-Value fields and assume that the sender
-can impose any length of SRH. If a PCC sets the X flag to zero, then
-it sets the SRv6 MSD-Type, MSD-Value fields that it can impose on a
-packet. If a PCE receives an SRv6-PCE-CAPABILITY sub-TLV with the X
-flag as set, and SRv6 MSD-Type or MSD-Value fields are set then it
-is considered as an error and the PCE MUST respond with a PCErr message
-(Error-Type = 1 "PCEP session establishment failure" and Error-Value = 1
-"reception of an invalid Open message or a non Open message."). In
-case the MSD-Type in SRv6-PCE-CAPABILITY sub-TLV received by the PCE
+In case the MSD-Type in SRv6-PCE-CAPABILITY sub-TLV received by the PCE
 does not correspond to one of the SRv6 MSD types, the PCE MUST respond
 with a PCErr message (Error-Type = 1 "PCEP session establishment
 failure" and Error-Value = 1 "reception of an invalid Open message or a
@@ -590,7 +576,7 @@ During path computation, PCE must consider the MSD information of all the nodes 
 A PCE MUST NOT send SRv6 paths exceeding the SRv6 MSD capabilities of the PCC. If a PCC needs to modify the SRv6 MSD value signaled via the Open message, it MUST close the PCEP session and re-establish it with the new value. If the PCC receives an SRv6 path that exceed its SRv6 MSD capabilties, the PCC MUST send a PCErr message with Error-Type = 10 (Reception of an invalid object) and Error-Value = 39 (Unsupported number of SRv6-ERO subobjects).
 
 
-The N flag, X flag and (MSD-Type,MSD-Value) pair inside the SRv6-PCE-CAPABILITY sub-TLV are meaningful only in the Open message sent to a PCE. As such,the flags MUST be set to zero and a (MSD-Type,MSD-Value) pair MUST NOT be present in the SRv6-PCE-CAPABILITY sub-TLV in an Open message sent to a PCC.  Similarly, a PCC MUST ignore flags and any (MSD-Type,MSD-Value) pair in a received Open message. If a PCE receives multiple SRv6-PCE-CAPABILITY sub-TLVs in an Open message, it processes only the first sub-TLV received.
+The N flag and (MSD-Type,MSD-Value) pair inside the SRv6-PCE-CAPABILITY sub-TLV are meaningful only in the Open message sent to a PCE. As such,the flags MUST be set to zero and a (MSD-Type,MSD-Value) pair MUST NOT be present in the SRv6-PCE-CAPABILITY sub-TLV in an Open message sent to a PCC.  Similarly, a PCC MUST ignore flags and any (MSD-Type,MSD-Value) pair in a received Open message. If a PCE receives multiple SRv6-PCE-CAPABILITY sub-TLVs in an Open message, it processes only the first sub-TLV received.
 
 
 ## ERO Processing {#ERO-Processing}
