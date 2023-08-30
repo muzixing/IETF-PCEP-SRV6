@@ -90,7 +90,6 @@ normative:
   RFC3209:
   RFC5440:
   RFC5511:
-  RFC6952:
   RFC8126:
   RFC8231:
   RFC8281:
@@ -101,6 +100,7 @@ normative:
   RFC8986:
 informative:
   RFC4657:
+  RFC6952:
   RFC7942:
   RFC8051:
   RFC8402:
@@ -678,7 +678,7 @@ The mechanism by which the PCC learns the path is outside the scope of this docu
 
 # Security Considerations {#Security-Considerations}
 
-The security considerations described in {{RFC5440}}, section 2.5 of {{RFC6952}}, {{RFC8231}}, {{RFC8281}}, {{RFC8253}} and {{RFC8664}} are applicable to this specification. No additional security measure is required.
+The security considerations described in {{RFC5440}}, section 2.5 of {{RFC6952}}, {{RFC8231}}, {{RFC8281}}, {{RFC8253}} and {{RFC8664}} are applicable to this specification.
 
 Note that this specification enables a network controller to
 instantiate an SRv6 path in the network.  This creates an additional
@@ -687,8 +687,7 @@ are not used.  If there is no integrity protection on the
 session, then an attacker could create an SRv6 path that may not subjected
 to the further verification checks. Further, the MSD field in the Open message
 could disclose node forwarding capabilities if suitable security mechanisms
-are not in place.
-
+are not in place. Hence, securing the PCEP session using Transport Layer Security (TLS) {{RFC8253}} is RECOMMENDED.
 
 # Manageability Considerations {#Manage}
 
