@@ -265,7 +265,7 @@ The format of the SRv6-PCE-CAPABILITY sub-TLV is shown in the following figure.
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |            Type=27            |            Length             |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|            Reserved           |             Flags         |N|X|
+|            Reserved           |             Flags         |N| |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |   MSD-Type    | MSD-Value     |   MSD-Type    | MSD-Value     |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -877,8 +877,7 @@ The following values are defined in this document.
                   14     Node or Adjacency     This document
                          Identifier (NAI) is
                          supported (N)
-                  15     Unlimited Maximum SID This document
-                         Depth (X)
+                  15     Unassigned
 ~~~~
 
 
