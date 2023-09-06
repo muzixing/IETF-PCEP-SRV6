@@ -45,13 +45,6 @@ author:
   org: Cisco Systems, Inc.
   country: Canada
   email: mkoldych@cisco.com
-- ins: P. Kaladharan
-  name: Prejeeth Kaladharan
-  org: RtBrick Inc
-  city: Bangalore
-  region: Karnataka
-  country: India
-  email: prejeeth@rtbrick.com
 - ins: Y. Zhu
   name: Yongqing Zhu
   org: China Telecom
@@ -62,6 +55,12 @@ author:
   email: zhuyq8@chinatelecom.cn
 
 contributor:
+- name: Prejeeth Kaladharan
+  org: RtBrick Inc
+  city: Bangalore
+  region: Karnataka
+  country: India
+  email: prejeeth@rtbrick.com
 - name: Dhruv Dhody
   org: Huawei
   country: India
